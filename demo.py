@@ -60,8 +60,25 @@ def hector_runner(params, comp_data, var):
 
 #print hector_runner([4,1,1], esm_co2, CONCENTRATION_CO2)
 
-#import scipy.optimize
-#optim = scipy.optimize.fmin_powell(hector_runner, x0 = [5,2,2], args = (esm_co2,CONCENTRATION_CO2))
-#print optim
+# import scipy.optimize
+# optim = scipy.optimize.fmin_powell(hector_runner, x0 = [5,2,2], args = (esm_co2,CONCENTRATION_CO2))
+# print optim
+
+hector_optim =  pyhector.run(pyhector.rcp45, {"temperature": {"S": 3.74202374},
+                                                 "simpleNbox":{"beta":9.77973754},
+                                                "simpleNbox":{"q10_rh":2.00205191}})
+
+optimized = hector_optim[CONCENTRATION_CO2].loc[2010:2100]
+
+plt.style.use('ggplot')
+plt.rcParams['figure.figsize'] = 16, 9
+
+hector_co2.plot(label="Default Hector")
+optimized.plot(label = "Optimized Hector")
+esm_co2.plot(label = "GFDL-ESM2M")
+plt.title("CO2 Concentration - rcp45")
+plt.ylabel("PPM")
+plt.legend(loc="best")
+plt.show()
 #http://127.0.0.1:8888/notebooks/demo.ipynb
 
