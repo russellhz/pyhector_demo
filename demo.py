@@ -11,12 +11,12 @@ output = pyhector.run(rcp26)
 # Print out other outputs
 output = pyhector.run(rcp26, outputs=['temperature.Tgav', 'simpleNbox.Ca', 'forcing.Ftot',
                                       'forcing.FCO2', 'ocean.Temp_HL'])
-#print output.head(5)
+print output.head(5)
 
 # Calculate mean forcing 1850-1950
 #print output['forcing.Ftot'].loc[1850:1950].mean()
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 #
 # for rcp in [rcp26, rcp45, rcp60, rcp85]:
 #     output = pyhector.run(rcp, {"core": {"endDate": 2100}})
@@ -70,15 +70,34 @@ hector_optim =  pyhector.run(pyhector.rcp45, {"temperature": {"S": 3.74202374},
 
 optimized = hector_optim[CONCENTRATION_CO2].loc[2010:2100]
 
-plt.style.use('ggplot')
-plt.rcParams['figure.figsize'] = 16, 9
-
-hector_co2.plot(label="Default Hector")
-optimized.plot(label = "Optimized Hector")
-esm_co2.plot(label = "GFDL-ESM2M")
-plt.title("CO2 Concentration - rcp45")
-plt.ylabel("PPM")
-plt.legend(loc="best")
-plt.show()
+# plt.style.use('ggplot')
+# plt.rcParams['figure.figsize'] = 16, 9
+#
+# hector_co2.plot(label="Default Hector")
+# optimized.plot(label = "Optimized Hector")
+# esm_co2.plot(label = "GFDL-ESM2M")
+# plt.title("CO2 Concentration - rcp45")
+# plt.ylabel("PPM")
+# plt.legend(loc="best")
+# plt.show()
 #http://127.0.0.1:8888/notebooks/demo.ipynb
 
+tas_file = "annual_avg_tas_GFDL-ESM2M_rcp45_r1i1p1.csv"
+esm_tas_data = pd.read_csv(tas_file).set_index('year')
+esm_tas = esm_tas_data.value
+
+SURFACE_TEMP = "temperature.Tgav"
+optim_temp = hector_optim[SURFACE_TEMP].loc[2010:2100] + 288.15
+
+
+hector_temp = pyhector.run(pyhector.rcp45)[SURFACE_TEMP].loc[2010:2100] + 288.15
+
+plt.style.use('ggplot')
+plt.rcParams['figure.figsize'] = 16, 9
+hector_temp.plot(label="Default Hector")
+optim_temp.plot(label = "Optimized Hector")
+esm_tas.plot(label = "GFDL-ESM2M")
+plt.title("Temperature - rcp45")
+plt.ylabel("Degrees K")
+plt.legend(loc="best")
+plt.show()
